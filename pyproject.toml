@@ -43,6 +43,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
+python-dotenv = "^1.0.0"
 
 # For Python versions 3.13 and above, use numpy versions 2.1.0,
 # required for poetry to not fail.

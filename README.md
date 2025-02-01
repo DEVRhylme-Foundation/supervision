@@ -45,6 +45,24 @@ pip install supervision
 
 Read more about conda, mamba, and installing from source in our [guide](https://roboflow.github.io/supervision/).
 
+## 🔐 Environment Variables
+
+Create a `.env` file to store sensitive configuration:
+
+```bash
+ROBOFLOW_API_KEY=your_api_key_here
+LOG_LEVEL=INFO
+```
+
+Then load them in your code:
+```python
+from dotenv import load_dotenv
+
+load_dotenv()  # Load before other imports
+# Now use os.getenv() to access values
+```
+
+
 ## 🔥 quickstart
 
 ### models
