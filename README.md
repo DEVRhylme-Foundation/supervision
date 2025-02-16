@@ -14,20 +14,92 @@
 
 </div>
 
-## 👋 hello
 
-**We write your reusable computer vision tools.** Whether you need to load your dataset from your hard drive, draw detections on an image or video, or count how many detections are in a zone. You can count on us! 🤝
+## Introduction
+Welcome to **Supervision**! We provide reusable computer vision tools designed to simplify your workflow, from dataset management to object detection and video annotation. Whether you need to load datasets, draw detections, or count objects in a zone, **Supervision** has you covered! 🤝
 
-## 💻 install
+## Features
 
-Pip install the supervision package in a
-[**Python>=3.8**](https://www.python.org/) environment.
+Model Agnostic: Works with any classification, detection, or segmentation model.
 
-```bash
+Prebuilt Annotators: Easily visualize and label objects in images and videos.
+
+Dataset Management: Load, split, merge, and save datasets in multiple formats.
+
+Beginner Friendly: Simple API with powerful utilities for computer vision tasks.
+---
+
+## Installation
+Supervision requires Python >= 3.8. You can install it using **pip**:
+```sh
 pip install supervision
 ```
+For additional installation options, including **conda**, **mamba**, and installing from source, refer to our [installation guide](#).
+
+---
 
 Read more about conda, mamba, and installing from source in our [guide](https://roboflow.github.io/supervision/).
+
+## Quickstart
+### Model Integration
+Supervision is **model-agnostic**, allowing you to integrate it with any classification, detection, or segmentation model. We offer built-in connectors for popular libraries like **Ultralytics YOLO**, **Transformers**, and **MMDetection**.
+
+#### Example: Object Detection with YOLO
+```python
+import cv2
+import supervision as sv
+from ultralytics import YOLO
+
+image = cv2.imread("your_image.jpg")
+model = YOLO("yolov8s.pt")
+result = model(image)[0]
+detections = sv.Detections.from_ultralytics(result)
+
+print(len(detections))  # Output: Number of detected objects
+```
+
+
+### Annotators
+Supervision provides customizable **annotators** to enhance object visualizations.
+
+#### Example: Annotating Objects in an Image
+```python
+import cv2
+import supervision as sv
+
+image = cv2.imread("your_image.jpg")
+detections = sv.Detections(...)
+
+box_annotator = sv.BoxAnnotator()
+annotated_frame = box_annotator.annotate(
+    scene=image.copy(),
+    detections=detections
+)
+```
+
+
+### Dataset Management
+Supervision streamlines dataset handling, allowing you to load, split, merge, and save datasets effortlessly.
+
+#### Example: Loading a Dataset from Roboflow
+```python
+import supervision as sv
+from roboflow import Roboflow
+
+project = Roboflow().workspace("<WORKSPACE_ID>").project("<PROJECT_ID>")
+dataset = project.version("<PROJECT_VERSION>").download("coco")
+
+ds = sv.DetectionDataset.from_coco(
+    images_directory_path=f"{dataset.location}/train",
+    annotations_path=f"{dataset.location}/train/_annotations.coco.json",
+)
+
+path, image, annotation = ds[0]  # Load image dynamically
+```
+
+
+---
+
 
 ## 🔐 Environment Variables
 
@@ -46,182 +118,29 @@ load_dotenv()  # Load before other imports
 # Now use os.getenv() to access values
 ```
 
+## Tutorials
+Enhance your knowledge with real-world use cases:
+- **[Dwell Time Analysis with Computer Vision](#)** – Analyze wait times using object tracking.
+- **[Speed Estimation & Vehicle Tracking](#)** – Implement multi-object tracking and speed estimation with YOLO & ByteTrack.
 
-## 🔥 quickstart
+📚 [Explore More Tutorials](#)
 
-### models
+---
 
-Supervision was designed to be model agnostic. Just plug in any classification, detection, or segmentation model. For your convenience, we have created [connectors](https://supervision.roboflow.com/latest/detection/core/#detections) for the most popular libraries like Ultralytics, Transformers, or MMDetection.
+## Community & Contribution
+🚀 Built something amazing with **Supervision**? Share your project with us!
+- **Football Players Tracking** 🎥 [Watch Video](#)
+- **Traffic Analysis** 🎥 [Watch Video](#)
+- **Vehicle Speed Estimation** 🎥 [Watch Video](#)
 
-```python
-import cv2
-import supervision as sv
-from ultralytics import YOLO
+Interested in contributing? Check out our [contribution guide](#) to get started! 🙏
 
-image = cv2.imread(...)
-model = YOLO("yolov8s.pt")
-result = model(image)[0]
-detections = sv.Detections.from_ultralytics(result)
+---
 
-len(detections)
-# 5
-```
+## Documentation
+📖 Visit our [full documentation page](#) for in-depth guides, API references, and best practices to accelerate your computer vision projects.
 
-<details>
-<summary>👉 more model connectors</summary>
-
-- inference
-
-  Running with [Inference](https://github.com/roboflow/inference) requires a [Roboflow API KEY](https://docs.roboflow.com/api-reference/authentication#retrieve-an-api-key).
-
-  ```python
-  import cv2
-  import supervision as sv
-  from inference import get_model
-
-  image = cv2.imread(...)
-  model = get_model(model_id="yolov8s-640", api_key=<ROBOFLOW API KEY>)
-  result = model.infer(image)[0]
-  detections = sv.Detections.from_inference(result)
-
-  len(detections)
-  # 5
-  ```
-
-</details>
-
-### annotators
-
-Supervision offers a wide range of highly customizable [annotators](https://supervision.roboflow.com/latest/detection/annotators/), allowing you to compose the perfect visualization for your use case.
-
-```python
-import cv2
-import supervision as sv
-
-image = cv2.imread(...)
-detections = sv.Detections(...)
-
-box_annotator = sv.BoxAnnotator()
-annotated_frame = box_annotator.annotate(
-  scene=image.copy(),
-  detections=detections)
-```
-
-https://github.com/roboflow/supervision/assets/26109316/691e219c-0565-4403-9218-ab5644f39bce
-
-### datasets
-
-Supervision provides a set of [utils](https://supervision.roboflow.com/latest/datasets/core/) that allow you to load, split, merge, and save datasets in one of the supported formats.
-
-```python
-import supervision as sv
-from roboflow import Roboflow
-
-project = Roboflow().workspace(<WORKSPACE_ID>).project(<PROJECT_ID>)
-dataset = project.version(<PROJECT_VERSION>).download("coco")
-
-ds = sv.DetectionDataset.from_coco(
-    images_directory_path=f"{dataset.location}/train",
-    annotations_path=f"{dataset.location}/train/_annotations.coco.json",
-)
-
-path, image, annotation = ds[0]
-    # loads image on demand
-
-for path, image, annotation in ds:
-    # loads image on demand
-```
-
-<details close>
-<summary>👉 more dataset utils</summary>
-
-- load
-
-  ```python
-  dataset = sv.DetectionDataset.from_yolo(
-      images_directory_path=...,
-      annotations_directory_path=...,
-      data_yaml_path=...
-  )
-
-  dataset = sv.DetectionDataset.from_pascal_voc(
-      images_directory_path=...,
-      annotations_directory_path=...
-  )
-
-  dataset = sv.DetectionDataset.from_coco(
-      images_directory_path=...,
-      annotations_path=...
-  )
-  ```
-
-- split
-
-  ```python
-  train_dataset, test_dataset = dataset.split(split_ratio=0.7)
-  test_dataset, valid_dataset = test_dataset.split(split_ratio=0.5)
-
-  len(train_dataset), len(test_dataset), len(valid_dataset)
-  # (700, 150, 150)
-  ```
-
-- merge
-
-  ```python
-  ds_1 = sv.DetectionDataset(...)
-  len(ds_1)
-  # 100
-  ds_1.classes
-  # ['dog', 'person']
-
-  ds_2 = sv.DetectionDataset(...)
-  len(ds_2)
-  # 200
-  ds_2.classes
-  # ['cat']
-
-  ds_merged = sv.DetectionDataset.merge([ds_1, ds_2])
-  len(ds_merged)
-  # 300
-  ds_merged.classes
-  # ['cat', 'dog', 'person']
-  ```
-
-- save
-
-  ```python
-  dataset.as_yolo(
-      images_directory_path=...,
-      annotations_directory_path=...,
-      data_yaml_path=...
-  )
-
-  dataset.as_pascal_voc(
-      images_directory_path=...,
-      annotations_directory_path=...
-  )
-
-  dataset.as_coco(
-      images_directory_path=...,
-      annotations_path=...
-  )
-  ```
-
-- convert
-
-  ```python
-  sv.DetectionDataset.from_yolo(
-      images_directory_path=...,
-      annotations_directory_path=...,
-      data_yaml_path=...
-  ).as_pascal_voc(
-      images_directory_path=...,
-      annotations_directory_path=...
-  )
-  ```
-
-</details>
-
+Happy coding! 🎉
 
 
 ## 💜 built with supervision
@@ -231,12 +150,4 @@ https://user-images.githubusercontent.com/26109316/207858600-ee862b22-0353-440b-
 https://github.com/roboflow/supervision/assets/26109316/c9436828-9fbf-4c25-ae8c-60e9c81b3900
 
 https://github.com/roboflow/supervision/assets/26109316/3ac6982f-4943-4108-9b7f-51787ef1a69f
-
-## 📚 documentation
-
-Visit our [documentation](https://roboflow.github.io/supervision) page to learn how supervision can help you build computer vision applications faster and more reliably.
-
-## 🏆 contribution
-
-We love your input! Please see our [contributing guide](https://github.com/roboflow/supervision/blob/main/CONTRIBUTING.md) to get started. Thank you 🙏 to all our contributors!
 
