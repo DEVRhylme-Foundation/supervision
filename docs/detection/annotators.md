@@ -525,6 +525,35 @@ Annotators accept detections and apply box or mask visualizations to the detecti
 
     </div>
 
+=== "Composite"
+
+    ```python
+    import cv2
+    import supervision as sv
+
+    image = cv2.imread(...)
+    detections = sv.Detections(...)
+
+    composite_annotator = sv.CompositeAnnotator([
+        sv.BoxAnnotator(),
+        sv.LabelAnnotator(),
+        sv.MaskAnnotator(),
+        sv.TraceAnnotator()
+    ])
+
+    annotated_frame = composite_annotator.annotate(
+        scene=image.copy(),
+        detections=detections
+    )
+    ```
+
+    <div class="result" markdown>
+
+    ![composite-annotator-example](https://media.roboflow.com/supervision-annotator-examples/
+    composite-annotator-example.png){ align=center width="800" }
+
+    </div>
+
 <div class="md-typeset">
     <h2>Try Supervision Annotators on your own image</h2>
     Visualize annotators on images with COCO classes such as people, vehicles, animals, household items.
@@ -671,7 +700,13 @@ Annotators accept detections and apply box or mask visualizations to the detecti
 :::supervision.annotators.core.ComparisonAnnotator
 
 <div class="md-typeset">
-    <h2><a href="#supervision.annotators.core.ColorLookup">ColorLookup</a></h2>
+    <h2><a href="#supervision.annotators.core.CompositeAnnotator">CompositeAnnotator</a></h2>
+</div>
+
+:::supervision.annotators.core.CompositeAnnotator
+
+<div class="md-typeset">
+    <h2><a href="#supervision.annotators.utils.ColorLookup">ColorLookup</a></h2>
 </div>
 
 :::supervision.annotators.utils.ColorLookup

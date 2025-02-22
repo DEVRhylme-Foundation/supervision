@@ -2950,3 +2950,55 @@ class ComparisonAnnotator:
             )
 
             x0 += width + gap
+
+
+class CompositeAnnotator(BaseAnnotator):
+    """
+    A class for combining multiple annotators into a single cohesive visualization pipeline.
+    """
+
+    def __init__(self, annotators: List[BaseAnnotator]):
+        """
+        Args:
+            annotators (List[BaseAnnotator]): A list of annotators to be combined.
+        """
+        self.annotators = annotators
+
+    def annotate(self, scene: ImageType, detections: Detections) -> ImageType:
+        """
+        Annotates the given scene with multiple annotators based on the provided detections.
+
+        Args:
+            scene (ImageType): The image where annotations will be drawn.
+                `ImageType` is a flexible type, accepting either `numpy.ndarray`
+                or `PIL.Image.Image`.
+            detections (Detections): Object detections to annotate.
+
+        Returns:
+            The annotated image, matching the type of `scene` (`numpy.ndarray`
+                or `PIL.Image.Image`)
+
+        Example:
+            ```python
+            import cv2
+            import supervision as sv
+
+            image = cv2.imread(...)
+            detections = sv.Detections(...)
+
+            composite_annotator = sv.CompositeAnnotator([
+                sv.BoxAnnotator(),
+                sv.LabelAnnotator(),
+                sv.MaskAnnotator(),
+                sv.TraceAnnotator()
+            ])
+
+            annotated_frame = composite_annotator.annotate(
+                scene=image.copy(),
+                detections=detections
+            )
+            ```
+        """
+        for annotator in self.annotators:
+            scene = annotator.annotate(scene, detections)
+        return scene
